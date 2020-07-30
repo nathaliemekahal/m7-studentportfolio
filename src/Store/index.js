@@ -1,14 +1,29 @@
-import { createStore } from "redux";
-import rootReducer from "../reducers";
+import { createStore, combineReducers, compose, applyMiddleware } from "redux";
+import fetchingReducer from "../reducers/fetching";
+import studentsReducer from "../reducers/students";
+
+import thunk from "redux-thunk";
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const initialState = {
-  isFetching: true,
+  students: {
+    list: [],
+  },
+  fetching: {
+    loading: true,
+  },
 };
+
+const bigReducer = combineReducers({
+  students: studentsReducer,
+  fetching: fetchingReducer,
+});
 
 export default function configureStore() {
   return createStore(
-    rootReducer,
+    bigReducer,
     initialState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    composeEnhancers(applyMiddleware(thunk))
   );
 }

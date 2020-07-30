@@ -5,9 +5,22 @@ import { connect } from "react-redux";
 
 const mapStateToProps = (state) => state;
 const mapDispatchToProps = (dispatch) => ({
-  DataLoaded: () => dispatch({ type: "REQUEST" }),
+  DataLoaded: () => dispatch({ type: "IS_LOADING" }),
+  fetchStudents: (url) => dispatch(fetchStudentsList(url)),
 });
 
+const fetchStudentsList = (url) => {
+  return (dispatch, getState) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) =>
+        dispatch({
+          type: "GET_STUDENT_LIST",
+          payload: data,
+        })
+      );
+  };
+};
 class Studentslist extends Component {
   constructor(props) {
     super(props);
@@ -18,12 +31,10 @@ class Studentslist extends Component {
     };
   }
 
-  componentDidMount = async () => {
-    let response = await fetch("http://localhost:3002/students/");
+  componentDidMount = () => {
+    let url = "http://localhost:3002/students/";
 
-    let students = await response.json();
-
-    this.setState({ students });
+    this.props.fetchStudents(url);
     setTimeout(this.props.DataLoaded, 1500);
   };
 
@@ -35,7 +46,7 @@ class Studentslist extends Component {
   render() {
     return (
       <Container>
-        {this.props.isFetching && (
+        {this.props.fetching.loading && (
           <Row
             className="justify-content-center align-items-center"
             style={{ height: "100vh" }}
