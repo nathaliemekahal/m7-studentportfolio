@@ -56,7 +56,7 @@ class Studentslist extends Component {
         )}
         {!this.props.isFetching && (
           <Row className="row-cols-sm-4 mt-4">
-            {this.state.students.map((student) => (
+            {this.props.students.list.map((student) => (
               <Card
                 className="mr-5"
                 onClick={() => {
